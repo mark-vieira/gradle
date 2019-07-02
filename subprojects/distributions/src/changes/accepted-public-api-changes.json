@@ -79,6 +79,14 @@
             "changes": [
                 "Method has been removed"
             ]
+        },
+        {
+            "type": "org.gradle.workers.WorkerConfiguration",
+            "member": "Class org.gradle.workers.WorkerConfiguration",
+            "acceptation": "Common functionality moved to an incubating class",
+            "changes": [
+                "org.gradle.workers.BaseWorkerSpec"
+            ]
         }
     ]
 }
