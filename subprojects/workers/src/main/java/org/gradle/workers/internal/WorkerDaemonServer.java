@@ -18,6 +18,7 @@ package org.gradle.workers.internal;
 
 import org.gradle.internal.classloader.ClassLoaderHierarchyHasher;
 import org.gradle.internal.hash.HashCode;
+import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.isolation.IsolatableFactory;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.ServiceRegistryBuilder;
@@ -78,8 +79,8 @@ public class WorkerDaemonServer implements WorkerProtocol {
             return new IsolatableSerializerRegistry(classLoaderHierarchyHasher, managedFactoryRegistry);
         }
 
-        ActionExecutionSpecFactory createActionExecutionSpecFactory(IsolatableFactory isolatableFactory, IsolatableSerializerRegistry serializerRegistry) {
-            return new DefaultActionExecutionSpecFactory(isolatableFactory, serializerRegistry);
+        ActionExecutionSpecFactory createActionExecutionSpecFactory(IsolatableFactory isolatableFactory, IsolatableSerializerRegistry serializerRegistry, InstantiatorFactory instantiatorFactory) {
+            return new DefaultActionExecutionSpecFactory(isolatableFactory, serializerRegistry, instantiatorFactory);
         }
 
         DefaultValueSnapshotter createValueSnapshotter(ClassLoaderHierarchyHasher classLoaderHierarchyHasher, ManagedFactoryRegistry managedFactoryRegistry) {
