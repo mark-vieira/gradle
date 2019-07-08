@@ -34,6 +34,14 @@ public class GradleWorkerMain {
     public void run() throws Exception {
         DataInputStream instr = new DataInputStream(new EncodedStream.EncodedInput(System.in));
 
+        // Read worker application classpath
+        int classPathLength = instr.readInt();
+        URL[] applicationClassPath = new URL[classPathLength];
+        for (int i = 0; i < classPathLength; i++) {
+            String url = instr.readUTF();
+            applicationClassPath[i] = new URL(url);
+        }
+
         // Read shared packages
         int sharedPackagesCount = instr.readInt();
         List<String> sharedPackages = new ArrayList<String>(sharedPackagesCount);
@@ -42,12 +50,14 @@ public class GradleWorkerMain {
         }
 
         // Read worker implementation classpath
-        int classPathLength = instr.readInt();
+        classPathLength = instr.readInt();
         URL[] implementationClassPath = new URL[classPathLength];
         for (int i = 0; i < classPathLength; i++) {
             String url = instr.readUTF();
             implementationClassPath[i] = new URL(url);
         }
+
+        ClassLoader applicationClassloader = new URLClassLoader(applicationClassPath, getClass().getClassLoader());
 
         ClassLoader implementationClassLoader;
         if (classPathLength > 0) {
@@ -56,11 +66,11 @@ public class GradleWorkerMain {
             for (String sharedPackage : sharedPackages) {
                 filteringClassLoaderSpec.allowPackage(sharedPackage);
             }
-            FilteringClassLoader filteringClassLoader = new FilteringClassLoader(getClass().getClassLoader(), filteringClassLoaderSpec);
+            FilteringClassLoader filteringClassLoader = new FilteringClassLoader(applicationClassloader, filteringClassLoaderSpec);
             implementationClassLoader = new URLClassLoader(implementationClassPath, filteringClassLoader);
         } else {
             // If no implementation classpath has been provided, just use the application classloader
-            implementationClassLoader = getClass().getClassLoader();
+            implementationClassLoader = applicationClassloader;
         }
 
         Class<? extends Callable> workerClass = implementationClassLoader.loadClass("org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker").asSubclass(Callable.class);

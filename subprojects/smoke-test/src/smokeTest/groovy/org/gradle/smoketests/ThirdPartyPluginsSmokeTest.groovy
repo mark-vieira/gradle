@@ -19,7 +19,6 @@ package org.gradle.smoketests
 import org.gradle.util.ports.ReleasingPortAllocator
 import org.gradle.vcs.fixtures.GitFileRepository
 import org.junit.Rule
-import spock.lang.Ignore
 import spock.lang.Issue
 import spock.lang.Unroll
 
@@ -349,7 +348,6 @@ class ThirdPartyPluginsSmokeTest extends AbstractSmokeTest {
         file('build/reports/spotbugs').isDirectory()
     }
 
-    @Ignore
     @Issue("https://github.com/gradle/gradle/issues/9897")
     def 'errorprone plugin'() {
         given:
