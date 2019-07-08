@@ -66,78 +66,6 @@ class FileCollectionSymlinkIntegrationTest extends AbstractIntegrationSpec {
         "project.objects.fileCollection()"   | "project.objects.fileCollection().from(file, symlink, symlinked)"
     }
 
-    @Issue("https://github.com/gradle/gradle/issues/1365")
-    def "detect changes to broken symlink outputs in #outputType"() {
-        def root = file("root").createDir()
-        def target = file("target")
-        def link = root.file("link")
-        buildFile << script(target, link)
-
-        when:
-        target.createFile()
-        run 'producesLink'
-        then:
-        executedAndNotSkipped ':producesLink'
-
-        when:
-        run 'producesLink'
-        then:
-        skipped ':producesLink'
-
-        when:
-        target.delete()
-        run 'producesLink'
-        then:
-        executedAndNotSkipped ':producesLink'
-
-        when:
-        run 'producesLink'
-        then:
-        skipped ':producesLink'
-
-        where:
-        outputType        | script
-        'OutputDirectory' | { targetParam, linkParam -> symbolicLinkOutputDirectory(targetParam, linkParam) }
-        'OutputFile'      | { targetParam, linkParam -> symbolicLinkOutputFile(targetParam, linkParam) }
-    }
-
-    def symbolicLinkOutputDirectory(target, link) {
-        """
-            import java.nio.file.*
-            class ProducesLink extends DefaultTask {
-                @OutputDirectory File outputDirectory 
-    
-                @TaskAction execute() {
-                    def link = Paths.get('${link}')
-                    Files.deleteIfExists(link);
-                    Files.createSymbolicLink(link, Paths.get('${target}'));
-                }
-            }
-            
-            task producesLink(type: ProducesLink) {
-                outputDirectory = file '${link.parentFile}'
-            }
-        """
-    }
-
-    def symbolicLinkOutputFile(target, link) {
-        """
-            import java.nio.file.*
-            class ProducesLink extends DefaultTask {
-                @OutputFile Path outputFile
-    
-                @TaskAction execute() {
-                    Files.deleteIfExists(outputFile);
-                    Files.createSymbolicLink(outputFile, Paths.get('${target}'));
-                }
-            }
-            
-            task producesLink(type: ProducesLink) {
-                outputFile = Paths.get('${link}')
-            }
-        """
-    }
-
     @Issue('https://github.com/gradle/gradle/issues/1365')
     def "broken symlink not produced by task is ignored"() {
         given:
@@ -157,21 +85,21 @@ class FileCollectionSymlinkIntegrationTest extends AbstractIntegrationSpec {
         when:
         run 'copy'
         then:
-        executedAndNotSkipped ':copy'
         outputDirectory.list().sort() == [input.name, brokenLink.name].sort()
+        executedAndNotSkipped ':copy'
 
         when:
         run 'copy'
         then:
-        skipped ':copy'
         outputDirectory.list().sort() == [input.name, brokenLink.name].sort()
+        skipped ':copy'
 
         when:
         brokenLink.delete()
         run 'copy'
         then:
-        skipped ':copy'
         outputDirectory.list() == [input.name]
+        skipped ':copy'
     }
 
     void maybeDeprecated(String expression) {
