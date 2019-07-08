@@ -356,7 +356,7 @@ public class ExecuteActionsTaskExecuter implements TaskExecuter {
             List<FileSystemSnapshot> roots = hasOverlappingOutputs
                 ? OutputFilterUtil.filterOutputSnapshotAfterExecution(afterLastExecutionFingerprint, beforeExecutionOutputSnapshot, afterExecutionOutputSnapshot)
                 : ImmutableList.of(afterExecutionOutputSnapshot);
-            return DefaultCurrentFileCollectionFingerprint.from(roots, AbsolutePathFingerprintingStrategy.IGNORE_MISSING);
+            return DefaultCurrentFileCollectionFingerprint.from(roots, AbsolutePathFingerprintingStrategy.INSTANCE);
         }
 
         @Override

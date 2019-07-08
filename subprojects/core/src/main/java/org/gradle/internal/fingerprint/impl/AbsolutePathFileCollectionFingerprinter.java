@@ -23,7 +23,7 @@ import org.gradle.internal.fingerprint.FileCollectionSnapshotter;
 public class AbsolutePathFileCollectionFingerprinter extends AbstractFileCollectionFingerprinter {
 
     public AbsolutePathFileCollectionFingerprinter(FileCollectionSnapshotter fileCollectionSnapshotter) {
-        super(AbsolutePathFingerprintingStrategy.INCLUDE_MISSING, fileCollectionSnapshotter);
+        super(AbsolutePathFingerprintingStrategy.INSTANCE, fileCollectionSnapshotter);
     }
 
     @Override

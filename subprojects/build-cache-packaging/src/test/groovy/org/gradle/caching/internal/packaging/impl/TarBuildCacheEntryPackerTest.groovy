@@ -342,7 +342,7 @@ class TarBuildCacheEntryPackerTest extends Specification {
         }
     }
 
-    def prop(String name = "test", TreeType type, File output, FingerprintingStrategy fingerprintingStrategy = AbsolutePathFingerprintingStrategy.IGNORE_MISSING) {
+    def prop(String name = "test", TreeType type, File output, FingerprintingStrategy fingerprintingStrategy = AbsolutePathFingerprintingStrategy.INSTANCE) {
         switch (type) {
             case FILE:
                 return new TreeDefinition(new TestCacheableTree(name, FILE, output)) {

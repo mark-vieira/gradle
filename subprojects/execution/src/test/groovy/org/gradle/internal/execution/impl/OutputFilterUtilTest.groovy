@@ -38,7 +38,7 @@ import static org.gradle.internal.execution.impl.OutputFilterUtil.filterOutputSn
 
 class OutputFilterUtilTest extends Specification {
 
-    private static final FileCollectionFingerprint EMPTY_OUTPUT_FINGERPRINT = AbsolutePathFingerprintingStrategy.IGNORE_MISSING.emptyFingerprint
+    private static final FileCollectionFingerprint EMPTY_OUTPUT_FINGERPRINT = AbsolutePathFingerprintingStrategy.INSTANCE.emptyFingerprint
 
     @Rule
     final TestNameTestDirectoryProvider temporaryFolder = TestNameTestDirectoryProvider.newInstance()
@@ -172,7 +172,7 @@ class OutputFilterUtilTest extends Specification {
     }
 
     private CurrentFileCollectionFingerprint fingerprintOutput(File outputDir) {
-        DefaultCurrentFileCollectionFingerprint.from([snapshotOutput(outputDir)], AbsolutePathFingerprintingStrategy.IGNORE_MISSING)
+        DefaultCurrentFileCollectionFingerprint.from([snapshotOutput(outputDir)], AbsolutePathFingerprintingStrategy.INSTANCE)
     }
 
     List<File> collectFiles(ImmutableList<FileSystemSnapshot> fileSystemSnapshots) {

@@ -52,7 +52,7 @@ class ResolveBeforeExecutionOutputsTaskExecuterTest extends Specification {
     def "declares no overlaps when there are none"() {
         given:
         def outputFilesAfterPreviousExecution = ImmutableSortedMap.of(
-            "output", AbsolutePathFingerprintingStrategy.INCLUDE_MISSING.emptyFingerprint
+            "output", AbsolutePathFingerprintingStrategy.INSTANCE.emptyFingerprint
         )
         afterPreviousExecutionState.outputFileProperties >> outputFilesAfterPreviousExecution
         def outputFilesBeforeExecution = ImmutableSortedMap.of(
@@ -72,7 +72,7 @@ class ResolveBeforeExecutionOutputsTaskExecuterTest extends Specification {
     def "declares overlaps when there is one"() {
         given:
         def outputFilesAfterPreviousExecution = ImmutableSortedMap.of(
-            "output", AbsolutePathFingerprintingStrategy.INCLUDE_MISSING.emptyFingerprint
+            "output", AbsolutePathFingerprintingStrategy.INSTANCE.emptyFingerprint
         )
         afterPreviousExecutionState.outputFileProperties >> outputFilesAfterPreviousExecution
         def outputFilesBeforeExecution = ImmutableSortedMap.<String, FileSystemSnapshot>of(

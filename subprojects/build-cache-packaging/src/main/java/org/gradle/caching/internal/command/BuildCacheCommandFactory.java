@@ -28,7 +28,6 @@ import org.gradle.caching.internal.packaging.BuildCacheEntryPacker;
 import org.gradle.internal.file.DefaultFileMetadata;
 import org.gradle.internal.file.FileType;
 import org.gradle.internal.fingerprint.CurrentFileCollectionFingerprint;
-import org.gradle.internal.fingerprint.FingerprintingStrategy;
 import org.gradle.internal.fingerprint.impl.AbsolutePathFingerprintingStrategy;
 import org.gradle.internal.fingerprint.impl.DefaultCurrentFileCollectionFingerprint;
 import org.gradle.internal.snapshot.FileSystemLocationSnapshot;
@@ -114,7 +113,6 @@ public class BuildCacheCommandFactory {
 
         private ImmutableSortedMap<String, CurrentFileCollectionFingerprint> snapshotUnpackedData(Map<String, ? extends FileSystemLocationSnapshot> treeSnapshots) {
             ImmutableSortedMap.Builder<String, CurrentFileCollectionFingerprint> builder = ImmutableSortedMap.naturalOrder();
-            FingerprintingStrategy fingerprintingStrategy = AbsolutePathFingerprintingStrategy.IGNORE_MISSING;
             entity.visitOutputTrees((treeName, type, root) -> {
                 FileSystemLocationSnapshot treeSnapshot = treeSnapshots.get(treeName);
                 String internedAbsolutePath = stringInterner.intern(root.getAbsolutePath());
@@ -123,7 +121,7 @@ public class BuildCacheCommandFactory {
                 if (treeSnapshot == null) {
                     fileSystemMirror.putMetadata(internedAbsolutePath, DefaultFileMetadata.missing());
                     fileSystemMirror.putSnapshot(new MissingFileSnapshot(internedAbsolutePath, root.getName()));
-                    builder.put(treeName, fingerprintingStrategy.getEmptyFingerprint());
+                    builder.put(treeName, AbsolutePathFingerprintingStrategy.INSTANCE.getEmptyFingerprint());
                     return;
                 }
 
@@ -143,7 +141,7 @@ public class BuildCacheCommandFactory {
                     default:
                         throw new AssertionError();
                 }
-                builder.put(treeName, DefaultCurrentFileCollectionFingerprint.from(roots, fingerprintingStrategy));
+                builder.put(treeName, DefaultCurrentFileCollectionFingerprint.from(roots, AbsolutePathFingerprintingStrategy.INSTANCE));
             });
             return builder.build();
         }

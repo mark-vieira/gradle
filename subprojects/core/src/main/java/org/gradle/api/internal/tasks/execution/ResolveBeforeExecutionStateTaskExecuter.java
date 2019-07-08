@@ -120,7 +120,7 @@ public class ResolveBeforeExecutionStateTaskExecuter implements TaskExecuter {
             Maps.transformEntries(beforeExecutionOutputSnapshots, (key, beforeExecutionOutputSnapshot) -> {
                     FileCollectionFingerprint afterLastExecutionFingerprint = afterLastExecutionFingerprints.get(key);
                     return afterLastExecutionFingerprint == null
-                        ? AbsolutePathFingerprintingStrategy.IGNORE_MISSING.getEmptyFingerprint()
+                        ? AbsolutePathFingerprintingStrategy.INSTANCE.getEmptyFingerprint()
                         : fingerprintOutputSnapshot(afterLastExecutionFingerprint, beforeExecutionOutputSnapshot, hasOverlappingOutputs);
                 }
             )
@@ -131,7 +131,7 @@ public class ResolveBeforeExecutionStateTaskExecuter implements TaskExecuter {
         List<FileSystemSnapshot> roots = hasOverlappingOutputs
             ? OutputFilterUtil.filterOutputSnapshotBeforeExecution(afterLastExecutionFingerprint, beforeExecutionOutputSnapshot)
             : ImmutableList.of(beforeExecutionOutputSnapshot);
-        return DefaultCurrentFileCollectionFingerprint.from(roots, AbsolutePathFingerprintingStrategy.IGNORE_MISSING);
+        return DefaultCurrentFileCollectionFingerprint.from(roots, AbsolutePathFingerprintingStrategy.INSTANCE);
     }
 
     private static ImmutableList<ImplementationSnapshot> collectActionImplementations(Collection<InputChangesAwareTaskAction> taskActions, ClassLoaderHierarchyHasher classLoaderHierarchyHasher) {

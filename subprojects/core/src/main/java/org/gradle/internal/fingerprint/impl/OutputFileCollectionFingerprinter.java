@@ -23,7 +23,7 @@ import org.gradle.internal.fingerprint.OutputNormalizer;
 public class OutputFileCollectionFingerprinter extends AbstractFileCollectionFingerprinter {
 
     public OutputFileCollectionFingerprinter(FileCollectionSnapshotter fileCollectionSnapshotter) {
-        super(AbsolutePathFingerprintingStrategy.IGNORE_MISSING, fileCollectionSnapshotter);
+        super(AbsolutePathFingerprintingStrategy.INSTANCE, fileCollectionSnapshotter);
     }
 
     @Override

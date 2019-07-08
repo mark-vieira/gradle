@@ -17,7 +17,6 @@
 package org.gradle.internal.fingerprint.impl;
 
 import com.google.common.collect.ImmutableMap;
-import org.gradle.internal.file.FileType;
 import org.gradle.internal.fingerprint.FileSystemLocationFingerprint;
 import org.gradle.internal.fingerprint.FingerprintHashingStrategy;
 import org.gradle.internal.fingerprint.FingerprintingStrategy;
@@ -33,15 +32,11 @@ import java.util.Map;
  * Fingerprint files without path or content normalization.
  */
 public class AbsolutePathFingerprintingStrategy extends AbstractFingerprintingStrategy {
-    public static final FingerprintingStrategy INCLUDE_MISSING = new AbsolutePathFingerprintingStrategy(true);
-    public static final FingerprintingStrategy IGNORE_MISSING = new AbsolutePathFingerprintingStrategy(false);
+    public static final FingerprintingStrategy INSTANCE = new AbsolutePathFingerprintingStrategy();
     public static final String IDENTIFIER = "ABSOLUTE_PATH";
 
-    private final boolean includeMissing;
-
-    private AbsolutePathFingerprintingStrategy(boolean includeMissing) {
+    private AbsolutePathFingerprintingStrategy() {
         super(IDENTIFIER);
-        this.includeMissing = includeMissing;
     }
 
     @Override
