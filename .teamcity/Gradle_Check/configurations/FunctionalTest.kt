@@ -25,9 +25,9 @@ class FunctionalTest(model: CIBuildModel, testCoverage: TestCoverage, subProject
     )
     applyTestDefaults(model, this, testTask, notQuick = !quickTest, os = testCoverage.os,
             extraParameters = (
-                    listOf(""""-PtestJavaHome=%${testCoverage.os}.${testCoverage.testJvmVersion}.${testCoverage.vendor}.64bit%"""")
-                            + buildScanTags.map { buildScanTag(it) }
-                            + buildScanValues.map { buildScanCustomValue(it.key, it.value) }
+                    listOf(""""-PtestJavaHome=%${testCoverage.os}.${testCoverage.testJvmVersion}.${testCoverage.vendor}.64bit%"""") +
+                            buildScanTags.map { buildScanTag(it) } +
+                            buildScanValues.map { buildScanCustomValue(it.key, it.value) }
                     ).joinToString(separator = " "),
             timeout = testCoverage.testType.timeout)
 

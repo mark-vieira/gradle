@@ -26,7 +26,7 @@ class FunctionalTestProject(model: CIBuildModel, testConfig: TestCoverage, stage
             buildType(FunctionalTest(model, testConfig, subProject.name, stage))
         }
     }
-}){
+}) {
     companion object {
         val missingTestCoverage = mutableListOf<TestCoverage>()
 

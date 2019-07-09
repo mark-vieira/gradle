@@ -64,7 +64,6 @@ class StagePasses(model: CIBuildModel, stage: Stage, prevStage: Stage?, contains
             param("revisionRule", "lastFinished")
             param("branchFilter", masterReleaseFilter)
         }
-
     }
 
     params {
