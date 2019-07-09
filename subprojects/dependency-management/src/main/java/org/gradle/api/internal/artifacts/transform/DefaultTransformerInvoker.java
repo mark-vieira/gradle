@@ -24,6 +24,7 @@ import org.gradle.api.file.FileSystemLocation;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.artifacts.dsl.dependencies.ProjectFinder;
 import org.gradle.api.internal.artifacts.transform.TransformationWorkspaceProvider.TransformationWorkspace;
+import org.gradle.api.internal.file.DefaultFileSystemLocation;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.internal.provider.Providers;
@@ -306,17 +307,7 @@ public class DefaultTransformerInvoker implements TransformerInvoker {
             this.dependencies = dependencies;
             this.outputFingerprinter = outputFingerprinter;
             this.executionTimer = Time.startTimer();
-            this.inputArtifactProvider = Providers.of(new FileSystemLocation() {
-                @Override
-                public File getAsFile() {
-                    return inputArtifact;
-                }
-
-                @Override
-                public String toString() {
-                    return inputArtifact.toString();
-                }
-            });
+            this.inputArtifactProvider = Providers.of(new DefaultFileSystemLocation(inputArtifact));
         }
 
         @Override
@@ -395,11 +386,6 @@ public class DefaultTransformerInvoker implements TransformerInvoker {
         public void visitOutputProperties(OutputPropertyVisitor visitor) {
             visitor.visitOutputProperty(OUTPUT_DIRECTORY_PROPERTY_NAME, TreeType.DIRECTORY, fileCollectionFactory.fixed(workspace.getOutputDirectory()));
             visitor.visitOutputProperty(RESULTS_FILE_PROPERTY_NAME, TreeType.FILE, fileCollectionFactory.fixed(workspace.getResultsFile()));
-        }
-
-        @Override
-        public boolean isAllowOverlappingOutputs() {
-            return false;
         }
 
         @Override
