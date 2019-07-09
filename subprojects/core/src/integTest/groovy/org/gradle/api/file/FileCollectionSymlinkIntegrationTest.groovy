@@ -174,6 +174,42 @@ class FileCollectionSymlinkIntegrationTest extends AbstractIntegrationSpec {
         outputDirectory.list() == [input.name]
     }
 
+    @Issue('https://github.com/gradle/gradle/issues/9904')
+    def "task with broken symlink in inputs are valid"() {
+        def brokenInputDirectory = file('brokenInputDirectory').createLink("brokenInputDirectoryTarget")
+        def inputDirectory = file('inputDirectory').createDir()
+        def brokenInputFile = inputDirectory.file('brokenInputFile').createLink("brokenInputFileTarget")
+        def output = file("output.txt").createFile()
+
+        buildFile << """
+            class CustomTask extends DefaultTask {
+                @InputDirectory File brokenInputDirectory
+                @InputDirectory File inputDirectory
+                @InputFile File brokenInputFile
+                @OutputFile File output
+
+                @TaskAction execute() {
+                    output.text = "\${brokenInputDirectory.name} \${brokenInputFile.name} \${inputDirectory.list()}"
+                }
+            }
+            task inputBrokenLinkNameCollector(type: CustomTask) {
+                brokenInputDirectory = file "${brokenInputDirectory}"
+                inputDirectory = file "${inputDirectory}"
+                brokenInputFile = file "${brokenInputFile}"
+                output = file "${output}"
+            }
+        """
+        assert !brokenInputDirectory.exists() && !brokenInputFile.exists() && inputDirectory.exists() && output.text.empty
+
+        when:
+        run 'inputBrokenLinkNameCollector', '--info'
+        then:
+        executedAndNotSkipped ':inputBrokenLinkNameCollector'
+        output.text == "brokenInputDirectory brokenInputFile [brokenInputFile]"
+        outputContains "Directory '${brokenInputDirectory}' specified for property 'brokenInputDirectory' is a broken symbolic link."
+        outputContains "File '${brokenInputFile}' specified for property 'brokenInputFile' is a broken symbolic link."
+    }
+
     void maybeDeprecated(String expression) {
         if (expression.contains("configurableFiles")) {
             executer.expectDeprecationWarning()
