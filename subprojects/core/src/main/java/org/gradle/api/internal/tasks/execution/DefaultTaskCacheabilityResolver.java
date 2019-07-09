@@ -26,6 +26,7 @@ import org.gradle.internal.execution.caching.CachingDisabledReasonCategory;
 import org.gradle.internal.file.RelativeFilePathResolver;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -64,11 +65,19 @@ public class DefaultTaskCacheabilityResolver implements TaskCacheabilityResolver
 
         for (OutputFilePropertySpec spec : outputFileProperties) {
             if (!(spec instanceof CacheableOutputFilePropertySpec)) {
-                return Optional.of(new CachingDisabledReason(
-                    CachingDisabledReasonCategory.NON_CACHEABLE_OUTPUT,
+                return Optional.of(new CachingDisabledReason(CachingDisabledReasonCategory.NON_CACHEABLE_OUTPUT,
                     "Output property '" + spec.getPropertyName() + "' contains a file tree"
                 ));
             }
+        }
+
+        Optional<File> invalidRootFile = outputFileProperties.stream()
+            .flatMap(spec -> spec.getPropertyFiles().getFiles().stream())
+            .filter(file -> !file.exists()).findAny();
+        if (invalidRootFile.isPresent()) {
+            return invalidRootFile.map(file -> new CachingDisabledReason(CachingDisabledReasonCategory.NON_CACHEABLE_OUTPUT,
+                "Output contains uncacheable file: '" + file + "'"
+            ));
         }
 
         for (SelfDescribingSpec<TaskInternal> cacheIfSpec : cacheIfSpecs) {
