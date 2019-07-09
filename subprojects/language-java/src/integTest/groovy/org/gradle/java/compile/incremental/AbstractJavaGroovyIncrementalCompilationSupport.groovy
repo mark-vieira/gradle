@@ -24,7 +24,7 @@ abstract class AbstractJavaGroovyIncrementalCompilationSupport extends AbstractI
 
     def enableCompilationAvoidance() {
         if (language == CompiledLanguage.GROOVY) {
-            settingsFile << "enableFeaturePreview('GROOVY_COMPILATION_AVOIDANCE')\n"
+            settingsFile << "\nenableFeaturePreview('GROOVY_COMPILATION_AVOIDANCE')\n"
         }
     }
 
