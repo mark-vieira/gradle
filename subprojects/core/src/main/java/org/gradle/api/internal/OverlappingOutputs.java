@@ -128,14 +128,11 @@ public class OverlappingOutputs {
             HashCode contentHash = beforeSnapshot.getHash();
             FileSystemLocationFingerprint previousFingerprint = previousFingerprints.get(path);
             HashCode previousContentHash = previousFingerprint == null ? null : previousFingerprint.getNormalizedContentHash();
-            // Missing files can be ignored
-            if (beforeSnapshot.getType() != FileType.Missing) {
-                if (createdSincePreviousExecution(previousContentHash)
-                    || (beforeSnapshot.getType() != previousFingerprint.getType())
-                    // The fingerprint hashes for non-regular files are slightly different to the snapshot hashes, we only need to compare them for regular files
-                    || (beforeSnapshot.getType() == FileType.RegularFile && changedSincePreviousExecution(contentHash, previousContentHash))) {
-                    return path;
-                }
+            if (createdSincePreviousExecution(previousContentHash)
+                || (beforeSnapshot.getType() != previousFingerprint.getType())
+                // The fingerprint hashes for non-regular files are slightly different to the snapshot hashes, we only need to compare them for regular files
+                || (beforeSnapshot.getType() == FileType.RegularFile && changedSincePreviousExecution(contentHash, previousContentHash))) {
+                return path;
             }
             return null;
         }

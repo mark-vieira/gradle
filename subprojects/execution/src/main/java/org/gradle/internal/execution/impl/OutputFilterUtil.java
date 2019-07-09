@@ -18,7 +18,6 @@ package org.gradle.internal.execution.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.gradle.internal.file.FileType;
 import org.gradle.internal.fingerprint.FileCollectionFingerprint;
 import org.gradle.internal.fingerprint.FileSystemLocationFingerprint;
 import org.gradle.internal.snapshot.DirectorySnapshot;
@@ -45,7 +44,7 @@ public class OutputFilterUtil {
     public static ImmutableList<FileSystemSnapshot> filterOutputSnapshotBeforeExecution(FileCollectionFingerprint afterLastExecutionFingerprint, FileSystemSnapshot beforeExecutionOutputSnapshot) {
         Map<String, FileSystemLocationFingerprint> fingerprints = afterLastExecutionFingerprint.getFingerprints();
         SnapshotFilteringVisitor filteringVisitor = new SnapshotFilteringVisitor(snapshot -> {
-            return snapshot.getType() != FileType.Missing && fingerprints.containsKey(snapshot.getAbsolutePath());
+            return fingerprints.containsKey(snapshot.getAbsolutePath());
         });
         beforeExecutionOutputSnapshot.accept(filteringVisitor);
         return filteringVisitor.getNewRoots();
@@ -82,9 +81,6 @@ public class OutputFilterUtil {
      * Decide whether an entry should be considered to be part of the output. See class Javadoc for definition of what is considered output.
      */
     private static boolean isOutputEntry(Map<String, FileSystemLocationFingerprint> afterPreviousExecutionFingerprints, Map<String, FileSystemLocationSnapshot> beforeExecutionSnapshots, FileSystemLocationSnapshot afterExecutionSnapshot) {
-        if (afterExecutionSnapshot.getType() == FileType.Missing) {
-            return false;
-        }
         FileSystemLocationSnapshot beforeSnapshot = beforeExecutionSnapshots.get(afterExecutionSnapshot.getAbsolutePath());
         // Was it created during execution?
         if (beforeSnapshot == null) {

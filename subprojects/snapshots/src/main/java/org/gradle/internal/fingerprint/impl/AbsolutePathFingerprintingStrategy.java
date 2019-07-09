@@ -67,12 +67,9 @@ public class AbsolutePathFingerprintingStrategy extends AbstractFingerprintingSt
 
                 @Override
                 public void visitFile(FileSystemLocationSnapshot fileSnapshot) {
-                    if (!includeMissing && fileSnapshot.getType() == FileType.Missing) {
-                        return;
-                    }
                     String absolutePath = fileSnapshot.getAbsolutePath();
                     if (processedEntries.add(absolutePath)) {
-                        builder.put(absolutePath, new DefaultFileSystemLocationFingerprint(fileSnapshot.getAbsolutePath(), fileSnapshot));
+                        builder.put(absolutePath, new DefaultFileSystemLocationFingerprint(absolutePath, fileSnapshot));
                     }
                 }
 
