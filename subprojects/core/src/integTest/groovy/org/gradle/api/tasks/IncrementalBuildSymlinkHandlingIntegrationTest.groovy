@@ -27,24 +27,24 @@ import java.nio.file.StandardCopyOption
 class IncrementalBuildSymlinkHandlingIntegrationTest extends AbstractIntegrationSpec {
     def setup() {
         buildFile << """
-// This is a workaround to bust the JVM's file canonicalization cache
-def f = file("delete-me")
-f.createNewFile()
-f.delete() // invalidates cache
-
-task work {
-    inputs.file('in.txt')
-    inputs.dir('in-dir')
-    outputs.file('out.txt')
-    outputs.dir('out-dir')
-    doLast {
-        file('out.txt').text = 'content'
-        def f2 = file('out-dir/file1.txt')
-        f2.parentFile.mkdirs()
-        f2 << 'content'
-    }
-}
-"""
+            // This is a workaround to bust the JVM's file canonicalization cache
+            def f = file("delete-me")
+            f.createNewFile()
+            f.delete() // invalidates cache
+            
+            task work {
+                inputs.file('in.txt')
+                inputs.dir('in-dir')
+                outputs.file('out.txt')
+                outputs.dir('out-dir')
+                doLast {
+                    file('out.txt').text = 'content'
+                    def f2 = file('out-dir/file1.txt')
+                    f2.parentFile.mkdirs()
+                    f2 << 'content'
+                }
+            }
+        """
     }
 
     def "uses the target of symlink for input file content"() {
@@ -122,16 +122,14 @@ task work {
         result.assertTasksSkipped(":work")
     }
 
-    def "symlink may not reference missing input file"() {
+    def "symlink may reference missing input file"() {
         file("in-dir").createDir()
         def link = file("in.txt")
         link.createLink("other")
         assert !link.exists()
 
         expect:
-        fails("work")
-        failure.assertHasDescription("A problem was found with the configuration of task ':work'.")
-        failure.assertHasCause("File '$link' specified for property '\$1' does not exist.")
+        succeeds("work")
     }
 
     def "can replace input file with symlink to file with same content"() {
