@@ -124,8 +124,7 @@ class IncrementalBuildSymlinkHandlingIntegrationTest extends AbstractIntegration
 
     def "symlink may reference missing input file"() {
         file("in-dir").createDir()
-        def link = file("in.txt")
-        link.createLink("other")
+        def link = file("in.txt").createLink("broken")
         assert !link.exists()
 
         expect:

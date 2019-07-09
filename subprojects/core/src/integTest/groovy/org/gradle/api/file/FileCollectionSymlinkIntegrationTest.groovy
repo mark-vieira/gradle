@@ -208,6 +208,11 @@ class FileCollectionSymlinkIntegrationTest extends AbstractIntegrationSpec {
         output.text == "brokenInputDirectory brokenInputFile [brokenInputFile]"
         outputContains "Directory '${brokenInputDirectory}' specified for property 'brokenInputDirectory' is a broken symbolic link."
         outputContains "File '${brokenInputFile}' specified for property 'brokenInputFile' is a broken symbolic link."
+
+        when:
+        run 'inputBrokenLinkNameCollector'
+        then:
+        skipped ':inputBrokenLinkNameCollector'
     }
 
     void maybeDeprecated(String expression) {
